@@ -1,0 +1,113 @@
+STATIC ANALYSIS: analysis/disc/click_me
+No execution, loading, debugger attachment, or emulation of the executable.
+Only Mach-O parsing, Capstone disassembly, and translated constant/data arithmetic.
+Size: 502816 bytes (0x7ac20).
+SHA256: c1df0f6bfdc367097a8fc2f904da0bdc1576fc0744e2fbbad27e205635cc92f9
+All file offsets below are absolute offsets in the universal file.
+
+BOTTOM LINE
+The first slice is an animation/decoy; the second is a meaningful six-clue
+checker. Crucially, its second MD5 target equals MD5(mainframe_ebcdic_ghost),
+confirming the EBCDIC PDF clue belongs to this checker. Matching is unordered:
+"second target" does not imply the clue must be supplied as input number 2.
+No complete flag or proven ZIP password was recovered; five clue preimages
+remain unknown. The README's "benign corpus payload" does not mean both
+architecture slices are semantically inert.
+
+FAT / MACH-O
+Big-endian FAT_MAGIC 0xcafebabe; two 16 KiB-aligned slices, both ARM64 code.
+0: fat CPU 0x0100000c, subtype 0; offset 0x4000, size 0x10bd0.
+1: fat CPU 0x0100000c, subtype 3 (ARM64e selector); offset 0x18000,
+   size 0x62c20. Its inner Mach-O header nevertheless reports subtype 0.
+Both inner files are MH_EXECUTE, little-endian MH_MAGIC_64.
+Parsed LC_SEGMENT_64, LC_MAIN, LC_SYMTAB, LC_DYSYMTAB, LC_FUNCTION_STARTS,
+LC_LOAD_DYLIB, and the LC_CODE_SIGNATURE SuperBlob / CodeDirectory.
+Symbols are mostly stripped imports; indirect symbol tables resolve stubs.
+Slice 0: 19 load commands, 11 sections, 9 symbols, 8 function starts.
+Slice 1: 18 load commands, 13 sections, 84 symbols, 342 function starts.
+
+SLICE 0: "totally_fake_flag"
+CodeDirectory identifier at 0x1036c (metadata, not an output flag).
+LC_MAIN entryoff 0x6b4 => VA 0x1000006b4, absolute file offset 0x46b4.
+__text: 0x46a8..0x51b3; __const: 0x5200..0x52e6.
+Dependencies: libSystem; imports bzero, memcpy, memmove, ptrace, usleep, write,
+and thread-local bootstrap. ptrace(31,0,0,0) at call site 0x471c is Darwin
+PT_DENY_ATTACH. No input-reading import; argc/argv are saved but not used for
+a password comparison in the inspected entry routine.
+The main routine constructs a colored 78-column x 15-row particle/flame
+animation, writes ANSI screen-clear/home sequences, sleeps 33000 us per
+frame, and loops. Constant XOR 0x80 unmasks six ANSI color sequences plus
+character palette " .,:;=+*oahHGM#B&@" (source 0x5200..0x524f plus immediates).
+
+Recovered display text: Ød1n_373rn4l_fl4r3
+Exact UTF-8 bytes: c3 98 64 31 6e 5f 33 37 33 72 6e 34 6c 5f 66 6c 34 72 33
+The letter after d is DIGIT ONE, not lowercase i.
+This is 19 bytes / 18 Unicode characters, generated rather than a plain string.
+- 0x5270: source block bytes "atot_yllekafalf_\0".
+- Other block chunks are loaded from 0x5260 and 0x5250.
+- 0x4840..0x497c: SHA-1-like schedule/compression. The volatile switch is zero,
+  selecting no ROL1 in the extended schedule; words are little-endian loads.
+- Computed digest: 3e071c64234f1b9dd840e66a8bdf1608f1cf5be6.
+- 0x49ac / 0x4a84..0x4a9c: first 19 hex characters XOR the 16-byte vector
+  at 0x5280 plus immediate bytes 0x50,0x4a,0x07.
+- 0x4f88..0x4f98: copy these 19 bytes into the frame; write site 0x4c80.
+Plain taunt at 0x52a7: "Strings ? Where we're going, we don't need strings...".
+Recovered animation text is a candidate clue/decoy string, not a demonstrated
+accepted checker input. Its UTF-8 MD5 does not match any of the six targets.
+
+SLICE 1: "true_honest_flag"
+CodeDirectory identifier at 0x7599c (metadata, not the decrypted flag).
+LC_MAIN entryoff 0x2c398 => VA 0x10002c398, file 0x44398.
+Entry calls runtime startup VA 0x100035510 (file 0x4d510), which calls the
+application VA 0x100000750 (file 0x18750) at file 0x4d5fc.
+Dependencies: libiconv + libSystem. Crystal-style String object layouts and
+runtime type names, exception/fiber/thread machinery, and leetspeak messages.
+Application obtains six strings from an existing six-element argument array
+or an interactive loop; prompt construction at 0x19b98 uses "flag[", an index,
+and "]> ". Prompt literals: 0x6682c and 0x66844. Newline/CRLF is removed.
+
+Six encoded MD5 targets: each is 32 bytes of 0x80..0x8f nibble data, packed by
+VA 0x100033ef8 (file 0x4bef8) as ((hi << 4) | (lo & 15)) & 255.
+File offset  Decoded MD5
+0x4de30      d82180ab7986e8c8286ef00f16c04885
+0x4de50      555cca3a364f57bd4e550e8758f1c08d
+0x4de70      c790cb74ddc76a4f9f83c9f79882d6fc
+0x4de90      cf0cbd1b55755a81ff87f2be8fba8ebf
+0x4deb0      d400db493c31ebf21fa0b2a4adeae070
+0x4ded0      9fc1de183e2761585dfce907afa249dc
+VERIFIED with Python hashlib:
+MD5(b'mainframe_ebcdic_ghost') = 555cca3a364f57bd4e550e8758f1c08d.
+The clue itself is NOT present as a plaintext string in the executable.
+
+0x1a3b4..0x1a600: MD5 computation on each input, with standard MD5 IV,
+round functions, shift amounts and constants (seed tables at 0x4dcf0/0x4dd30).
+0x1a624..0x1a714: compare against and remove a matching target from a list,
+counting matches; no fixed target/input ordering is imposed.
+0x1a738..0x1a754: require six inputs and no unconsumed digest targets.
+Failure at 0x1b73c uses "n0p3 (" (0x6685c) and the matched count.
+
+Success path:
+0x1a7ac..0x1aa6c: SHA-256-style hashing (standard rotation round structure,
+initial/round constants generated from primes), then XOR each 32-byte digest
+into a zeroed 32-byte accumulator. Thus the key combination is order-independent.
+0x1b258: nibble-pack the ciphertext source.
+Ciphertext source 0x4def0..0x4df3f: 80 encoded nibble bytes => 40 ciphertext bytes:
+645128013769750e50451f917558f493e3aeed5a51d0cbfae98eed185e1b00b042a8f813a9d5551c
+0x1b530..0x1b568: standard RC4 KSA, 256-entry identity S-box,
+j = (j + S[i] + key[i % 32]) & 255; swap S[i],S[j].
+0x1b598..0x1b5f0: RC4 PRGA XORs the 40 ciphertext bytes.
+0x1b5f4..0x1b640: constructs a String and prints it with newline via
+VA 0x1000307d8 (file 0x487d8). Complete plaintext requires all six input strings;
+MD5 digests alone are not sufficient to reconstruct their SHA-256-derived key.
+
+REPRODUCTION / VALIDATION
+python -B analysis/macho_inspect.py
+python -B analysis/macho_inspect.py --slice 1
+python -B analysis/macho_inspect.py --disasm 0x100000840 --count 240
+python -B analysis/macho_inspect.py --slice 1 --disasm 0x1000034c0 --count 140
+python -B analysis/macho_inspect.py --recover
+The script adds analysis/vendor to sys.path, suppresses bytecode-cache writes,
+and never loads/executes the target. --recover performs only translated
+constant-only arithmetic and asserts the recovered UTF-8 text / MD5 clue match.
+Only analysis/macho_inspect.py and analysis/macho_notes.txt are retained as
+new analysis artifacts. No archive or ZIP-password test was performed.
